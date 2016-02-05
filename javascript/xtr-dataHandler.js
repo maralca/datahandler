@@ -179,7 +179,7 @@
 						rotulos: principal.dadosFormatados,
 						links: principal.url,		
 						dado: tipoDado,
-						incosistencias: [],
+						inconsistencias: [],
 						polados: []
 					}
 				}
@@ -226,7 +226,7 @@
 					rotulos: principal.dadosFormatados,
 					links: principal.url,		
 					dado: principal.tipo,
-					incosistencias: [],
+					inconsistencias: [],
 					polados: []
 				}
 
