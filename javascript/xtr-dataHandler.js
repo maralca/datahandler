@@ -346,7 +346,7 @@
 					abaixoDoLimite: descendentes.hasvalue("length <= "+maximo),
 					periodosIguais: principal.periodosIguais,
 					mesmoEstado: principal.mesmoEstado,
-					mesmaRegiao: principal.mesmaRegiao,
+					mesmaRegiao: principal.mesmaRegiao
 				}
 				console.info("------------------");
 				if(tem.uma.categoria && tem.uma.serie){
