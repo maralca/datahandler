@@ -296,8 +296,7 @@
 				kwargs = {
 					tipo: "tabela",
 					mostrar: "false",
-					colunas: "all",
-					tipoDado: "tabela"
+					colunas: "all"
 				}
 				compositeData = getSpecificCompositeData(principal,descendentes,kwargs)
 
