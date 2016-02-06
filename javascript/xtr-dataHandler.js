@@ -457,7 +457,7 @@
 						}
 					}
 				}				
-				if(tipoIndex==3){ //geografica
+				if(tipoIndex==3 && false){ //geografica
 					grafico = "geografica";
 					escala = "linear";
 
