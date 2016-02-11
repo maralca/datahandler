@@ -457,10 +457,10 @@
 						}
 					}
 				}				
-				if(tipoIndex==3 && false){ //geografica
+				if(tipoIndex==3){ //geografica
 					grafico = "geografica";
 					escala = "linear";
-
+					
 					if(tem.mesmaRegiao){
 						if(tem.mesmoEstado){
 							grafico += "/"+tem.mesmoEstado;
@@ -483,7 +483,7 @@
 						"Valores absolutos ou porcentagens verticais?",tem.coeficiente && tem.soma.vertical || tem.absoluto,'\n',
 						"Valores positivos?",tem.positivos,'\n',
 						"Valores somam verticalmente?",tem.soma.vertical);
-					if(tem.uma.serie && tem.coeficiente && tem.soma.vertical || tem.absoluto && tem.positivos && tem.soma.vertical){
+					if(tem.uma.serie && (tem.coeficiente && tem.soma.vertical || tem.absoluto) && tem.positivos && tem.soma.vertical){
 						grafico = "pie";
 						escala = "linear";
 						console.info(grafico,escala);
@@ -1596,7 +1596,7 @@
             if(auxIndex >= 0)
                 pointsIndex.push(auxIndex);
 
-            pointsIndex.sort(function(a,b){ return a < b; });
+            pointsIndex.sort(function(a,b){ return a - b; });
 
             return pointsIndex;
 
