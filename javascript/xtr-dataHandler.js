@@ -346,7 +346,8 @@
 					abaixoDoLimite: descendentes.hasvalue("length <= "+maximo),
 					periodosIguais: principal.periodosIguais,
 					mesmoEstado: principal.mesmoEstado,
-					mesmaRegiao: principal.mesmaRegiao
+					mesmaRegiao: principal.mesmaRegiao,
+					todasSaoCidades: principal.todasSaoCidades
 				}
 				console.info("------------------");
 				if(tem.uma.categoria && tem.uma.serie){
@@ -460,17 +461,24 @@
 				if(tipoIndex==3){ //geografica
 					grafico = "geografica";
 					escala = "linear";
+
+
 					
 					if(tem.mesmaRegiao){
 						if(tem.mesmoEstado){
 							grafico += "/"+tem.mesmoEstado;
 						}
 						else{
-							grafico += "/"+tem.mesmaRegiao
+							grafico += "/"+tem.mesmaRegiao;
 						}
 					}
 					else{
-						grafico += "/brasil";
+						if(tem.todasSaoCidades){
+							grafico += "/brasil_municipios";
+						}
+						else{
+							grafico += "/brasil_estado";
+						}
 					}
 					console.info(grafico,escala);
 					return [grafico,escala];
