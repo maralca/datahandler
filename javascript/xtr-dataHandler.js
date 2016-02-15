@@ -1602,7 +1602,7 @@
             if(auxIndex >= 0)
                 pointsIndex.push(auxIndex);
 
-            pointsIndex.sort(function(a,b){ return a - b; });
+            pointsIndex.sort(XtrGraficoUtil.compare);
 
             return pointsIndex;
 
