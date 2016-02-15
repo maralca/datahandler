@@ -461,8 +461,6 @@
 				if(tipoIndex==3){ //geografica
 					grafico = "geografica";
 					escala = "linear";
-
-
 					
 					if(tem.mesmaRegiao){
 						if(tem.mesmoEstado){
@@ -477,7 +475,7 @@
 							grafico += "/brasil_municipios";
 						}
 						else{
-							grafico += "/brasil_estado";
+							grafico += "/brasil_estados";
 						}
 					}
 					console.info(grafico,escala);
