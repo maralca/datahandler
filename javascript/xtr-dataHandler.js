@@ -176,7 +176,8 @@
 						tipo: tipo,
 						escala: escala,
 						series: getDataSeries(specifics),
-						rotulos: principal.dadosFormatados,
+						rotulosFormatados: principal.dadosFormatados,
+						rotulos: principal.dados,
 						links: principal.url,		
 						dado: tipoDado,
 						inconsistencias: [],
@@ -223,7 +224,8 @@
 					tipo: tipoEscala[0],
 					escala: tipoEscala[1],
 					series: getDataSeries(descendentes),
-					rotulos: principal.dadosFormatados,
+					rotulosFormatados: principal.dadosFormatados,
+					rotulos: principal.dados,
 					links: principal.url,		
 					dado: principal.tipo,
 					inconsistencias: [],
@@ -1584,12 +1586,12 @@
             };
             return toReturn;
         },
-        getPointsIndexFrom:function(comp,alvo,pontos){
+        getPointsIndexFrom:function(compositeData,alvo,pontos){
             var decay=0;
             var pointsIndex = [];
             var startPointIndex = Math.floor(alvo);
             
-            var maxIndex = comp.rotulos.length;
+            var maxIndex = compositeData.rotulos.length;
 
             pointsIndex.push(startPointIndex);
             var countPontos = 1;
@@ -1616,29 +1618,29 @@
                 }
             }
         },
-        getPointsFrom:function(comp,serieAlvo,alvo,pontos){
+        getPointsFrom:function(compositeData,serieAlvo,alvo,pontos){
 
-            var pointsIndex = this.getPointsIndexFrom(comp,alvo,pontos);
+            var pointsIndex = this.getPointsIndexFrom(compositeData,alvo,pontos);
 
             var points = [];
 
             for (var pi = 0; pi < pointsIndex.length; pi++) {
                 var pointIndex = pointsIndex[pi];
-                var ponto = this.getPoint(comp,serieAlvo,pointIndex)
+                var ponto = this.getPoint(compositeData,serieAlvo,pointIndex)
                 points.push(ponto);
             };
 
             return points;
         },
-        interpolate:function(comp,serieAlvo,alvo,pontos){
-            var rotulos = comp.rotulos;
+        interpolate:function(compositeData,serieAlvo,alvo,pontos){
+            var rotulos = compositeData.rotulos;
 
             var nPontos=3;
             if(pontos){
                 nPontos = pontos;
             } 
 
-            var Pontos = this.getPointsFrom(comp,serieAlvo,alvo,nPontos);
+            var Pontos = this.getPointsFrom(compositeData,serieAlvo,alvo,nPontos);
             var rotuloInicial = parseFloat(rotulos[alvo]);
             var rotuloFinal = parseFloat(rotulos[alvo-1]);
 
@@ -1648,8 +1650,8 @@
 
             return {x:rotuloMedio,y:pxRoutloMedio};
         },
-        extrapolate:function(comp,serieAlvo,alvo,pontos){
-            var rotulos = comp.rotulos;
+        extrapolate:function(compositeData,serieAlvo,alvo,pontos){
+            var rotulos = compositeData.rotulos;
 
             var nPontos=1;
             if(pontos){
@@ -1663,7 +1665,7 @@
                 maxIndex = rotulos.length-1;
                 maxName = last;
             }
-            var Pontos = this.getPointsFrom(comp,serieAlvo,maxIndex,nPontos);
+            var Pontos = this.getPointsFrom(compositeData,serieAlvo,maxIndex,nPontos);
             var rotuloAlvo = maxName+1;
             var pxRotuloAlvo = this.lagrande(rotuloAlvo,Pontos);
 
