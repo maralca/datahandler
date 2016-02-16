@@ -72,7 +72,11 @@
 			this.getSeeker=getSeeker;
 			this.search=search;
 
-			return this;		
+			return this;
+
+			function dosomething(){
+				return;
+			}
 		/////////////////////
 		//METODOS PROPRIOS //
 		/////////////////////
@@ -351,7 +355,7 @@
 					mesmaRegiao: principal.mesmaRegiao,
 					todasSaoCidades: principal.todasSaoCidades
 				}
-				console.info("------------------");
+				dosomething("------------------");
 				if(tem.uma.categoria && tem.uma.serie){
 					return "";
 				}				
@@ -361,53 +365,53 @@
 
 				if(tipoIndex==0){ //Cronologica
 
-					console.info("Dividida em períodos iguais?",tem.periodosIguais);
+					dosomething("Dividida em períodos iguais?",tem.periodosIguais);
 
 					if(tem.periodosIguais){			
 
-						console.info("Coeficientes horizontais e/ou tem Índices?",
+						dosomething("Coeficientes horizontais e/ou tem Índices?",
 									tem.coeficiente && tem.soma.horizontal || tem.indice);	
 
 						if(tem.coeficiente && tem.soma.horizontal || tem.indice){
 
-							console.info("Quantas séries de dados?",
+							dosomething("Quantas séries de dados?",
 										descendentes.length);
 
 							if(tem.uma.serie){
 								grafico = "line";
 								escala = getScale(descendentes);
-								console.info(grafico,escala);
+								dosomething(grafico,escala);
 								return [grafico,escala];
 							}
 							else{
 								grafico = "line"; //agrupada
 								escala = getScale(descendentes);
-								console.info(grafico,escala);
+								dosomething(grafico,escala);
 								return [grafico,escala];
 							}
 						}
-						console.info("Valores absolutos ou porcentagens verticais?",tem.absoluto || tem.coeficiente,'\n',
+						dosomething("Valores absolutos ou porcentagens verticais?",tem.absoluto || tem.coeficiente,'\n',
 									"Valores somam verticalmente?",tem.soma.vertical);
 
 						if((tem.absoluto || tem.coeficiente && tem.soma.vertical)&& tem.soma.vertical){
 
-							console.info("Quantas séries de dados?",descendentes.length);
+							dosomething("Quantas séries de dados?",descendentes.length);
 
 							if(tem.uma.serie){
 								grafico = "area";
 								escala = "linear";
-								console.info(grafico,escala);
+								dosomething(grafico,escala);
 								return [grafico,escala];
 							}
 
-							console.info("Valores absolutos?",tem.absoluto,'\n',
+							dosomething("Valores absolutos?",tem.absoluto,'\n',
 								"Valores positivos?",tem.positivos,'\n',
 								"Valores somam horizontalmente?",tem.soma.horizontal);
 
 							if(tem.absoluto && tem.positivos && tem.soma.horizontal){
 								grafico = "stackedarea";
 								escala = "linear";
-								console.info(grafico,escala);
+								dosomething(grafico,escala);
 								return [grafico,escala];
 							}
 						}
@@ -417,45 +421,45 @@
 				if(tipoIndex==1){ //Ordinal
 					if(tem.abaixoDoLimite){
 
-						console.info("Quantas séries de dados?",descendentes.length);
+						dosomething("Quantas séries de dados?",descendentes.length);
 
 						if(tem.uma.serie){
 							grafico = "columns";
 							escala = "linear";
-							console.info(grafico,escala);
+							dosomething(grafico,escala);
 							return [grafico,escala];
 						}
 
-						console.info("Valores positivos?",tem.positivos,'\n',
+						dosomething("Valores positivos?",tem.positivos,'\n',
 							"Valores somam horizontalmente?",tem.soma.horizontal);
 
 						if(!(tem.positivos && tem.soma.horizontal)){
 							grafico = "clusteredcolumns";
 							escala = getScale(descendentes);
-							console.info(grafico,escala);
+							dosomething(grafico,escala);
 							return [grafico,escala];
 						}
 
-						console.info("Valores absolutos?",tem.absoluto);
+						dosomething("Valores absolutos?",tem.absoluto);
 
 						if(tem.absoluto){
 							grafico = "stackedcolumns";
 							escala = "linear";
-							console.info(grafico,escala);
+							dosomething(grafico,escala);
 							return [grafico,escala];
 						}
-						console.info("Porcentagens horizontais?",tem.coeficiente && tem.soma.horizontal);
+						dosomething("Porcentagens horizontais?",tem.coeficiente && tem.soma.horizontal);
 
 						if(tem.coeficiente && tem.soma.horizontal){
 							grafico = "stackedcolumns";
 							escala = "justa";
-							console.info(grafico,escala);
+							dosomething(grafico,escala);
 							return [grafico,escala];
 						}
 						else{
 							grafico = "clusteredcolumns";
 							escala = getScale(descendentes);
-							console.info(grafico,escala);
+							dosomething(grafico,escala);
 							return [grafico,escala];
 						}
 					}
@@ -480,61 +484,61 @@
 							grafico += "/brasil_estados";
 						}
 					}
-					console.info(grafico,escala);
+					dosomething(grafico,escala);
 					return [grafico,escala];
 				}
 				else{
 					tipoIndex--;
 				}
 				if(tipoIndex==2){ //nominal
-					console.info("1 série de dados?",tem.uma.serie,'\n',
+					dosomething("1 série de dados?",tem.uma.serie,'\n',
 						"Valores absolutos ou porcentagens verticais?",tem.coeficiente && tem.soma.vertical || tem.absoluto,'\n',
 						"Valores positivos?",tem.positivos,'\n',
 						"Valores somam verticalmente?",tem.soma.vertical);
 					if(tem.uma.serie && (tem.coeficiente && tem.soma.vertical || tem.absoluto) && tem.positivos && tem.soma.vertical){
 						grafico = "pie";
 						escala = "linear";
-						console.info(grafico,escala);
+						dosomething(grafico,escala);
 						return [grafico,escala];
 					}
 				}
 
-				console.info("Quantas séries de dados?",descendentes.length);
+				dosomething("Quantas séries de dados?",descendentes.length);
 
 				if(tem.maisDeUma){
 					grafico = "bars";
 					escala = "linear";
-					console.info(grafico,escala);
+					dosomething(grafico,escala);
 					return [grafico,escala];
 				}
 
-				console.info("Valores positivos? Valores somam horizontalmente?",
+				dosomething("Valores positivos? Valores somam horizontalmente?",
 							tem.positivos,'e',tem.soma.horizontal);
 
 				if(tem.positivos && tem.soma.horizontal){
 
-					console.info("Valores absolutos?",tem.absoluto);
+					dosomething("Valores absolutos?",tem.absoluto);
 
 					if(tem.absoluto){
 						grafico = "stackedbars";
 						escala = "linear";
-						console.info(grafico,escala);
+						dosomething(grafico,escala);
 						return [grafico,escala];
 					}
 
-					console.info("Porcentagens horizontais?",tem.coeficiente && tem.soma.horizontal);
+					dosomething("Porcentagens horizontais?",tem.coeficiente && tem.soma.horizontal);
 
 					if(tem.coeficiente && tem.soma.horizontal){
 						grafico = "stackedbars";
 						escala = "justa";
-						console.info(grafico,escala);
+						dosomething(grafico,escala);
 						return [grafico,escala];
 					}
 				}
 				
 				grafico = "clusteredbars";
 				escala = getScale(descendentes);
-				console.info(grafico,escala);
+				dosomething(grafico,escala);
 				return [grafico,escala];
 			}
 			/**
@@ -566,7 +570,7 @@
 			 */
 			function digest(){
 				if(digestEnable){
-					console.info("Digest of DataHandler was request by",arguments.callee.caller);
+					dosomething("Digest of DataHandler was request by",arguments.callee.caller);
 
 					colunas = {
 						principal: {},
@@ -1418,96 +1422,6 @@
 				return matchs;
 			}
 	}
-	var Base64={
-	    _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-	    encode: function(e) {
-	        var t = "";
-	        var n, r, i, s, o, u, a;
-	        var f = 0;
-	        e = Base64._utf8_encode(e);
-	        while (f < e.length) {
-	            n = e.charCodeAt(f++);
-	            r = e.charCodeAt(f++);
-	            i = e.charCodeAt(f++);
-	            s = n >> 2;
-	            o = (n & 3) << 4 | r >> 4;
-	            u = (r & 15) << 2 | i >> 6;
-	            a = i & 63;
-	            if (isNaN(r)) {
-	                u = a = 64
-	            } else if (isNaN(i)) {
-	                a = 64
-	            }
-	            t = t + this._keyStr.charAt(s) + this._keyStr.charAt(o) + this._keyStr.charAt(u) + this._keyStr.charAt(a)
-	        }
-	        return t
-	    },
-	    decode: function(e) {
-	        var t = "";
-	        var n, r, i;
-	        var s, o, u, a;
-	        var f = 0;
-	        e = e.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-	        while (f < e.length) {
-	            s = this._keyStr.indexOf(e.charAt(f++));
-	            o = this._keyStr.indexOf(e.charAt(f++));
-	            u = this._keyStr.indexOf(e.charAt(f++));
-	            a = this._keyStr.indexOf(e.charAt(f++));
-	            n = s << 2 | o >> 4;
-	            r = (o & 15) << 4 | u >> 2;
-	            i = (u & 3) << 6 | a;
-	            t = t + String.fromCharCode(n);
-	            if (u != 64) {
-	                t = t + String.fromCharCode(r)
-	            }
-	            if (a != 64) {
-	                t = t + String.fromCharCode(i)
-	            }
-	        }
-	        t = Base64._utf8_decode(t);
-	        return t
-	    },
-	    _utf8_encode: function(e) {
-	        e = e.replace(/\r\n/g, "\n");
-	        var t = "";
-	        for (var n = 0; n < e.length; n++) {
-	            var r = e.charCodeAt(n);
-	            if (r < 128) {
-	                t += String.fromCharCode(r)
-	            } else if (r > 127 && r < 2048) {
-	                t += String.fromCharCode(r >> 6 | 192);
-	                t += String.fromCharCode(r & 63 | 128)
-	            } else {
-	                t += String.fromCharCode(r >> 12 | 224);
-	                t += String.fromCharCode(r >> 6 & 63 | 128);
-	                t += String.fromCharCode(r & 63 | 128)
-	            }
-	        }
-	        return t
-	    },
-	    _utf8_decode: function(e) {
-	        var t = "";
-	        var n = 0;
-	        var r = c1 = c2 = 0;
-	        while (n < e.length) {
-	            r = e.charCodeAt(n);
-	            if (r < 128) {
-	                t += String.fromCharCode(r);
-	                n++
-	            } else if (r > 191 && r < 224) {
-	                c2 = e.charCodeAt(n + 1);
-	                t += String.fromCharCode((r & 31) << 6 | c2 & 63);
-	                n += 2
-	            } else {
-	                c2 = e.charCodeAt(n + 1);
-	                c3 = e.charCodeAt(n + 2);
-	                t += String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
-	                n += 3
-	            }
-	        }
-	        return t
-	    }
-	}
 	/**
      * Object, para manipular dados de \compositeData\series e fazer interpolacação e/ou extrapolação
      *
@@ -1551,9 +1465,9 @@
             var L=[];
             var parcial = []
             var somatorio = 0;
-            console.info('------------\n',titulo);
+            dosomething('------------\n',titulo);
             for(var i = 0; i < x.length; i++) {
-                console.info("X:",x[i],"\tY:",y[i]);
+                dosomething("X:",x[i],"\tY:",y[i]);
                 L[i]=1;
                 for (var j = 0; j < x.length; j++) {
                     if(j != i){
@@ -1565,7 +1479,7 @@
             for (var i = 0; i < parcial.length; i++) {
                 somatorio = somatorio + parcial[i];
             };
-            console.info("\nXa:",alvo,"\tP(Xa):",somatorio);
+            dosomething("\nXa:",alvo,"\tP(Xa):",somatorio);
             return somatorio;
         },
         makeInterpolationArray:function(rotulos){
