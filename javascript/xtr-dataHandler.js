@@ -1081,13 +1081,74 @@
 				return tem;
 			}
 	}
-	/**
-	 * Classe, para manipular data com intenção de download e/ou upload
-	 *
-	 * @method  FileHandler
-	 *
-	 * @param  {any}	data 
-	 */
+	function CookieHandler(){
+
+		var cookies;
+
+		cookies = document.cookie.split(';');
+
+		this._ = cookies;
+		this.setByHours = setCookieHours;
+		this.set = setCookieHours;
+		this.setByDays = setCookieDays;
+		this.get = getCookie;
+		this.check = checkCookie;
+
+		return this;
+
+		function setCookieHours(property, value, horas) {
+			var data;
+			var validade;
+
+		    data = new Date();
+		    data.setTime(data.getTime() + (horas*60*60*1000));
+
+		    validade = "expires="+data.toUTCString();
+
+		    document.cookie = property + "=" + value + "; " + validade;
+		}
+		function setCookieDays(property, value, dias) {
+			var data;
+			var validade;
+
+		    data = new Date();
+		    data.setTime(data.getTime() + (dias*24*60*60*1000));
+
+		    validade = "expires="+data.toUTCString();
+
+		    document.cookie = property + "=" + value + "; " + validade;
+		}
+		function getCookie(property) {
+			var cookieIndex;
+			var cookie;
+			var value;
+
+		    property = property + "=";
+		    for(cookieIndex = 0; cookies.length > cookieIndex; cookieIndex++){
+		        cookie = cookies[cookieIndex];
+
+		        while(cookie.charAt(0) == ' '){
+		        	cookie = cookie.substring(1);
+		        }
+		        if(cookie.indexOf(property) == 0){
+		        	value = cookie.substr(property.length);
+		        	return value;
+		        }
+		    }
+		    return "";
+		}
+
+		function checkCookie(property) {
+		    var value;
+
+		    value = getCookie(property);
+		   	
+		   	if(value){
+		   		return true;
+		   	}
+		   	return false;
+		}
+	}
 	/**
 	 * Classe, para manipular data com intenção de download e/ou upload
 	 *
@@ -1289,11 +1350,21 @@
 			this.override=override;
 			this.getSeeker=getSeeker;
 			this.search=search;
+			this.addToAll=addToAll;
 
 			return this;
 		//////////////////////
 		//METODOS DE CLASSE //
 		//////////////////////
+			function addToAll(property,value){
+				var compositeData;
+				var compositeDataIndex;
+
+				for(compositeDataIndex = 0; compositeDatas.length > compositeDataIndex; compositeDataIndex++){
+					compositeData = compositeDatas[compositeDataIndex];
+					compositeData[property] = value;
+				}
+			}
 			/**
 			 * ADICIONAR, novo compositeData ao \CompositeDataHandler\compositeDatas
 			 *
