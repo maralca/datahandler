@@ -353,7 +353,9 @@
 					periodosIguais: principal.periodosIguais,
 					mesmoEstado: principal.mesmoEstado,
 					mesmaRegiao: principal.mesmaRegiao,
-					todasSaoCidades: principal.todasSaoCidades
+					todasSaoCidades: principal.todasSaoCidades,
+					ehMeso: principal.ehMeso,
+					ehMicro: principal.ehMicro
 				}
 				dosomething("------------------");
 				if(tem.uma.categoria && tem.uma.serie){
@@ -467,10 +469,17 @@
 				if(tipoIndex==3){ //geografica
 					grafico = "geografica";
 					escala = "linear";
-					
+
+					console.log(tem);
 					if(tem.mesmaRegiao){
 						if(tem.mesmoEstado){
 							grafico += "/"+tem.mesmoEstado;
+						}
+						else if(tem.ehMeso){
+							grafico += "/"
+						}
+						else if(tem.ehMicro){
+
 						}
 						else{
 							grafico += "/"+tem.mesmaRegiao;
@@ -479,6 +488,12 @@
 					else{
 						if(tem.todasSaoCidades){
 							grafico += "/brasil_municipios";
+						}
+						else if(tem.ehMeso){
+							grafico += "/brasil/mesoregioes";
+						}
+						else if(tem.ehMicro){
+							grafico += "/brasil/microrregioes";
 						}
 						else{
 							grafico += "/brasil_estados";
@@ -825,7 +840,9 @@
 			this.periodosIguais = periodosIguais();
 			this.mesmoEstado = mesmoEstado();
 			this.mesmaRegiao = mesmaRegiao();
-			this.todasSaoCidades = isEveryoneCity();
+			this.todasSaoCidades = principal.titulo.toLowerCase().indexOf("município") >= 0;
+			this.ehMeso = principal.titulo.toLowerCase().indexOf("mesorregião") >= 0;
+			this.ehMicro = principal.titulo.toLowerCase().indexOf("microregião") >= 0;
 			this._ = principal;
 
 			return this;
@@ -850,7 +867,10 @@
 				rotulos = principal.dados;
 
 				hasChange = rotulos.length <= 1;
-				hasChange = hasChange || principal.tipo != "cronologica";
+				hasChange = hasChange;
+
+				if(principal.tipo != "cronologica")
+					return false;
 
 				for(rotuloIndex = 1; rotulos.length > rotuloIndex && !hasChange; rotuloIndex++){
 
@@ -871,7 +891,6 @@
 
 				return hasChange;					
 			}
-
 			function isEveryoneCity(){
 				var rotulos,rotulo;
 				var rotuloIndex;
@@ -934,38 +953,126 @@
 				var regiao;
 				var regiaoNome;
 
-				var hasChange;				
+				var goOn;				
+
+				var saoCidades;
+				var saoRegiao;
+				var saoEstado;
+				var saoMesorregiao;
+				var saoMicrorregiao;
+
+				var unMactchRegioesContador;
+				var regiaoContador;
+
+				saoCidades = isEveryoneCity();
+
+				saoRegiao = true;
+				saoEstado = true;
+				saoMesorregiao = true;
+				saoMicrorregiao = true;
 
 				rotulos = principal.dados;
 
-				hasChange = rotulos.length <= 1;
-				hasChange = hasChange || principal.tipo != "geografica";
-				for(rotuloIndex = 1; rotulos.length > rotuloIndex && !hasChange; rotuloIndex++){					
-					rotuloCurrent = rotulos[rotuloIndex];
-					rotuloBefore = rotulos[rotuloIndex-1];
+				goOn = rotulos.length > 1;
+				goOn = goOn && principal.tipo == "geografica";
 
-					if(isEveryoneCity()){
+				for(rotuloIndex = 1; rotulos.length > rotuloIndex && goOn; rotuloIndex++){					
+					rotuloCurrent = rotulos[rotuloIndex];
+					rotuloBefore = rotulos[rotuloIndex-1];					
+
+					rotuloCurrent = rotuloCurrent.replace(/\s/ig,"").toLowerCase();
+					rotuloBefore = rotuloBefore.replace(/\s/ig,"").toLowerCase();
+
+					if(saoCidades){
 						rotuloCurrent = rotuloCurrent.split("/");
 						rotuloBefore = rotuloBefore.split("/");
 						rotuloCurrent = rotuloCurrent[1];
 						rotuloBefore = rotuloBefore[1];
 					}
+					else{
+						if(saoRegiao){
+							unMactchRegioesContador = 0;
+							regiaoContador = 0;
 
-					rotuloCurrent = rotuloCurrent.replace(" ","").toLowerCase();
-					rotuloBefore = rotuloBefore.replace(" ","").toLowerCase();
+							for(regiaoNome in regioes){
+								regiao = regioes[regiaoNome];
+								regiaoContador++;
+								if(regiao.indexOf(rotuloCurrent) >= 0){
+									goOn = regiao.indexOf(rotuloCurrent) == regiao.indexOf(rotuloBefore);
+								}
+								else{
+									unMactchRegioesContador++;
+									saoRegiao = unMactchRegioesContador != regiaoContador;
+									goOn = saoRegiao;
+								}
+							}
+						}
+						if(!saoRegiao && saoMesorregiao){
+							var infoCurrent = XTR_MUNICIPIOS_INFO.filter(function(value){
+								return value.meso == rotuloCurrent;
+							});
+							infoCurrent.sort(function(a,b){
+								return XtrGraficoUtil.compare(a,b,"name");
+							});
+							var infoBefore = XTR_MUNICIPIOS_INFO.filter(function(value){
+								return value.meso == rotuloBefore;
+							});						
+							infoBefore.sort(function(a,b){
+								return XtrGraficoUtil.compare(a,b,"name");
+							});
 
-					for(regiaoNome in regioes){
-						regiao = regioes[regiaoNome];
-						if(regiao.indexOf(rotuloCurrent) >= 0){
-							hasChange = regiao.indexOf(rotuloCurrent) != regiao.indexOf(rotuloBefore);
-							break;
+							saoMesorregiao = infoBefore.length + infoCurrent.length > 0;
+
+							if(saoMesorregiao){
+								infoBefore = infoBefore[0];
+								infoCurrent = infoCurrent[0];
+
+								infoCurrent = infoCurrent.name;
+								infoBefore = infoBefore.name;
+
+								infoBefore = infoBefore.split("/")[1].replace(/\s/ig,"");
+								infoCurrent = infoCurrent.split("/")[1].replace(/\s/ig,"");
+
+								goOn = infoBefore == infoCurrent;
+							}
+						}
+						if(!saoRegiao && !saoMesorregiao && saoMicrorregiao){
+							var infoCurrent = XTR_MUNICIPIOS_INFO.filter(function(value){
+								return value.micro == rotuloCurrent;
+							});
+							infoCurrent.sort(function(a,b){
+								return XtrGraficoUtil.compare(a,b,"name");
+							});
+							var infoBefore = XTR_MUNICIPIOS_INFO.filter(function(value){
+								return value.micro == rotuloBefore;
+							});						
+							infoBefore.sort(function(a,b){
+								return XtrGraficoUtil.compare(a,b,"name");
+							});
+
+							saoMicrorregiao = infoBefore.length + infoCurrent.length > 0;
+							goOn = saoMesorregiao;
+
+							if(saoMesorregiao){
+								infoBefore = infoBefore[0];
+								infoCurrent = infoCurrent[0];
+
+								infoCurrent = infoCurrent.name;
+								infoBefore = infoBefore.name;
+
+								infoBefore = infoBefore.split("/")[1].replace(/\s/ig,"");
+								infoCurrent = infoCurrent.split("/")[1].replace(/\s/ig,"");
+
+								goOn = infoBefore == infoCurrent;
+							}
 						}
 					}
+
 				};
-				if(!hasChange)
+				if(goOn)
 					return regiaoNome;
 
-				return !hasChange;
+				return false;
 			}
 	}
 	/**
