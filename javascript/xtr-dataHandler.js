@@ -18,6 +18,9 @@
 			var currentCompositeData;
 			var currentIndex = 0;
 
+			var primeiro;
+			var ordem;
+
 			var maximo = 30;
 
 			var digestEnable = false;
@@ -129,7 +132,7 @@
 			 *
 			 * @return {Object}
 			 */
-			function getSpecificCompositeData(principal,descendentes,kwargs){
+			function getSpecificCompositeData(principal,descendentes,kwargs,tituloPrincipal){
 				var compositeData;
 
 				var colunaIndexes;
@@ -185,7 +188,8 @@
 						links: principal.url,		
 						dado: tipoDado,
 						inconsistencias: [],
-						polados: []
+						polados: [],
+						titulo: tituloPrincipal
 					}
 				}
 
@@ -201,7 +205,7 @@
 			 *
 			 * @return  {Object}          CompositeData para ser usado diretamente em \SuperChart
 			 */
-			function getCompositeData(principal,descendentes){
+			function getCompositeData(principal,descendentes,tituloPrincipal){
 				var descendente;
 				var descendenteIndex;
 
@@ -233,7 +237,8 @@
 					links: principal.url,		
 					dado: principal.tipo,
 					inconsistencias: [],
-					polados: []
+					polados: [],
+					titulo: tituloPrincipal
 				}
 
 				return compositeData;
@@ -247,7 +252,7 @@
 			 *
 			 * @return  {Object[]}         CompositeDatas cada Object para ser usado em \SuperChart
 			 */
-			function getCompositeDatas(principal,descendentes,graficos){
+			function getCompositeDatas(principal,descendentes,graficos,tituloPrincipal){
 				var grupoMaker;
 
 				var grupos,grupo;
@@ -274,14 +279,14 @@
 				for(grupoIndex in grupos){
 					grupo = grupos[grupoIndex];
 
-					compositeData = getCompositeData(principal,grupo);
+					compositeData = getCompositeData(principal,grupo,tituloPrincipal);
 
 					if(XtrGraficoUtil.isset(compositeData.tipo) ? compositeData.tipo!=null : false)
 						compositeDatas.push(compositeData);
 						
 					for(innerGrupoIndex = 0; grupo.length > innerGrupoIndex && grupo.length > 1; innerGrupoIndex++){
 						innerGrupo = grupo[innerGrupoIndex];
-						compositeData = getCompositeData(principal,innerGrupo);
+						compositeData = getCompositeData(principal,innerGrupo,tituloPrincipal);
 						if(XtrGraficoUtil.isset(compositeData.tipo) ? compositeData.tipo!=null : false)
 							compositeDatas.push(compositeData);
 					};
@@ -294,7 +299,7 @@
 						mostrar: grafico.mostrar,
 						colunas: grafico.colunas
 					};
-					compositeData = getSpecificCompositeData(principal,descendentes,kwargs);
+					compositeData = getSpecificCompositeData(principal,descendentes,kwargs,tituloPrincipal);
 					if(XtrGraficoUtil.isobj(compositeData) ? compositeData.tipo!=null : false)
 						compositeDatas.push(compositeData);
 				};
@@ -304,7 +309,7 @@
 					mostrar: "false",
 					colunas: "all"
 				}
-				compositeData = getSpecificCompositeData(principal,descendentes,kwargs)
+				compositeData = getSpecificCompositeData(principal,descendentes,kwargs,tituloPrincipal)
 
 				compositeDatas.push(compositeData);
 
@@ -471,8 +476,6 @@
 					grafico = "geografica";
 					escala = "linear";
 
-					console.log(tem);
-
 					if(tem.municipios){
 						grafico += "/municipios"
 					}
@@ -500,7 +503,6 @@
 					else{
 						grafico += "/brasil"
 					}
-					console.log(grafico);
 					dosomething(grafico,escala);
 					return [grafico,escala];
 				}
@@ -604,7 +606,23 @@
 
 					graficos = Data.grafico;
 
-					compositeDatas = getCompositeDatas(colunas.principal,colunas.descendentes,graficos);
+					tituloPrincipal = Data.titulo;
+
+					compositeDatas = getCompositeDatas(
+						colunas.principal,
+						colunas.descendentes,
+						graficos,
+						tituloPrincipal
+					);
+
+					ordem = Data.column;
+
+					primeiro = Data.sortedColumn;
+
+					compositeDatas.sort(function(a,b){
+						
+					});
+					
 					currentIndex = 0;
 
 					digestCycle++;
