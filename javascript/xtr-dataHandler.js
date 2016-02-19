@@ -357,7 +357,7 @@
 					estados: principal.estados,
 					regioes: principal.regioes,
 					mesorregioes: principal.mesorregioes,
-					microregioes: principal.microregioes
+					microrregioes: principal.microregioes
 				}
 				dosomething("------------------");
 				if(tem.uma.categoria && tem.uma.serie){
@@ -479,8 +479,8 @@
 					else if(tem.mesorregioes){
 						grafico += "/mesorregioes";						
 					}
-					else if(tem.microregioes){						
-						grafico += "/microregioes";
+					else if(tem.microrregioes){						
+						grafico += "/microrregioes";
 					}
 					else if(tem.estados){
 						grafico += "/estados";
@@ -491,15 +491,16 @@
 
 					if(tem.mesmaRegiao){
 						if(tem.mesmoEstado){
-							grafico += "/"+tem.mesmoEstado;
+							grafico += "/estados/"+tem.mesmoEstado.toLowerCase();
 						}
 						else{
-							grafico += "/"+tem.mesmaRegiao;
+							grafico += "/regioes/"+tem.mesmaRegiao.toLowerCase();
 						}
 					}
 					else{
 						grafico += "/brasil"
 					}
+					console.log(grafico);
 					dosomething(grafico,escala);
 					return [grafico,escala];
 				}
@@ -922,10 +923,10 @@
 						goOn = aux(rotuloCurrent,rotuloBefore,"nome",tocompare);
 					}
 					else if(microregioes){
-						goOn = aux(rotuloCurrent,rotuloBefore,"microregiao",tocompare);
+						goOn = aux(rotuloCurrent,rotuloBefore,"microrregiao",tocompare);
 					}
 					else if(mesorregioes){
-						goOn = aux(rotuloCurrent,rotuloBefore,"mesoregiao",tocompare);
+						goOn = aux(rotuloCurrent,rotuloBefore,"mesorregiao",tocompare);
 					}
 					else if(estados){
 						goOn = aux(rotuloCurrent,rotuloBefore,"estado",tocompare);
@@ -940,14 +941,8 @@
 					var infoBefore = XTR_MUNICIPIOS_INFO.filter(function(value){
 						return value[propertyTarget] == rotuloBefore;
 					});
-					infoCurrent.sort(function(a,b){
-						return XtrGraficoUtil.compare(a,b,propertyToCompare);
-					});
-					infoBefore.sort(function(a,b){
-						return XtrGraficoUtil.compare(a,b,propertyToCompare);
-					});
 
-					if(infoBefore.length + infoCurrent.length > 0){
+					if(infoBefore.length > 0 && infoCurrent.length > 0){
 
 						infoBefore = infoBefore[0];
 						infoCurrent = infoCurrent[0];
