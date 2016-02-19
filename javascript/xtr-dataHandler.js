@@ -353,16 +353,17 @@
 					periodosIguais: principal.periodosIguais,
 					mesmoEstado: principal.mesmoEstado,
 					mesmaRegiao: principal.mesmaRegiao,
-					todasSaoCidades: principal.todasSaoCidades,
-					ehMeso: principal.ehMeso,
-					ehMicro: principal.ehMicro
+					municipios: principal.municipios,
+					estados: principal.estados,
+					regioes: principal.regioes,
+					mesorregioes: principal.mesorregioes,
+					microregioes: principal.microregioes
 				}
 				dosomething("------------------");
 				if(tem.uma.categoria && tem.uma.serie){
 					return "";
 				}				
 				tipo = principal._.tipo;
-
 				tipoIndex = tipos.principal.indexOf(tipo);
 
 				if(tipoIndex==0){ //Cronologica
@@ -471,33 +472,33 @@
 					escala = "linear";
 
 					console.log(tem);
+
+					if(tem.municipios){
+						grafico += "/municipios"
+					}
+					else if(tem.mesorregioes){
+						grafico += "/mesorregioes";						
+					}
+					else if(tem.microregioes){						
+						grafico += "/microregioes";
+					}
+					else if(tem.estados){
+						grafico += "/estados";
+					}
+					else if(tem.regioes){
+						grafico += "/regioes";
+					}
+
 					if(tem.mesmaRegiao){
 						if(tem.mesmoEstado){
 							grafico += "/"+tem.mesmoEstado;
-						}
-						else if(tem.ehMeso){
-							grafico += "/"
-						}
-						else if(tem.ehMicro){
-
 						}
 						else{
 							grafico += "/"+tem.mesmaRegiao;
 						}
 					}
 					else{
-						if(tem.todasSaoCidades){
-							grafico += "/brasil_municipios";
-						}
-						else if(tem.ehMeso){
-							grafico += "/brasil/mesoregioes";
-						}
-						else if(tem.ehMicro){
-							grafico += "/brasil/microrregioes";
-						}
-						else{
-							grafico += "/brasil_estados";
-						}
+						grafico += "/brasil"
 					}
 					dosomething(grafico,escala);
 					return [grafico,escala];
@@ -826,23 +827,30 @@
 	 * @param   {Object}         principal
 	 */
 	function ColunaPrincipal(principal){
+		var municipios;
+		var estados;
+		var mesorregioes;
+		var microregioes;
 		var regioes;
 		///////////////
 		//CONSTRUÇÃO //
 		///////////////
-			regioes = {
-				"norte": ["ac","am","ap","pa","ro","rr","to"],
-				"nordeste": ["al","ba","ce","ma","pb","pe","pi","rn","se"],
-				"centro-oeste": ["df","go","ms","mt"],
-				"sudeste": ["sp","es","mg","rj"],
-				"sul": ["pr","rs","sc"]
-			}
+			municipios = principal.titulo.toLowerCase().indexOf("município") >= 0;
+			estados = principal.titulo.toLowerCase().indexOf("estado") >= 0;
+			mesorregioes = principal.titulo.toLowerCase().indexOf("mesorregião") >= 0;
+			microregioes = principal.titulo.toLowerCase().indexOf("microrregião") >= 0;
+			regioes = principal.titulo.toLowerCase().indexOf("região") >= 0;
+
 			this.periodosIguais = periodosIguais();
-			this.mesmoEstado = mesmoEstado();
-			this.mesmaRegiao = mesmaRegiao();
-			this.todasSaoCidades = principal.titulo.toLowerCase().indexOf("município") >= 0;
-			this.ehMeso = principal.titulo.toLowerCase().indexOf("mesorregião") >= 0;
-			this.ehMicro = principal.titulo.toLowerCase().indexOf("microregião") >= 0;
+			this.municipios = municipios;
+			this.estados = estados;
+			this.mesorregioes = mesorregioes;
+			this.microregioes = microregioes;
+			this.regioes = regioes;
+
+			this.mesmoEstado = mesmo("estado");
+			this.mesmaRegiao = mesmo("regiao");
+
 			this._ = principal;
 
 			return this;
@@ -891,61 +899,7 @@
 
 				return hasChange;					
 			}
-			function isEveryoneCity(){
-				var rotulos,rotulo;
-				var rotuloIndex;
-
-				var isEveryone;
-
-				rotulos = principal.dados;
-
-				isEveryone = true;
-
-				for(rotuloIndex = 0; rotulos.length > rotuloIndex && isEveryone; rotuloIndex++){
-					rotulo = rotulos[rotuloIndex];
-					isEveryone = rotulo.split("/").length > 1;
-				};
-				return isEveryone;
-			}
-			/**
-			 * INDENTIFICAR se coluna principal possui todos os municipios do mesmo estado
-			 *
-			 * @method mesmoEstado
-			 *
-			 * @return {Boolean}
-			 */
-			function mesmoEstado(){
-				var rotulos;
-				var rotuloCurrent,rotuloBefore;
-				var rotuloIndex;				
-
-				var hasChange;
-
-				var estados;
-
-				rotulos = principal.dados;
-
-				hasChange = rotulos.length <= 1;
-				hasChange = hasChange || principal.tipo != "geografica";
-				hasChange = hasChange || !isEveryoneCity();
-
-				for(rotuloIndex = 1; rotulos.length > rotuloIndex && !hasChange; rotuloIndex++){
-					rotuloCurrent = rotulos[rotuloIndex].split("/");
-					rotuloCurrent = rotuloCurrent[1];
-					rotuloCurrent = rotuloCurrent.replace(" ","").toLowerCase();
-
-					rotuloBefore = rotulos[rotuloIndex-1].split("/");
-					rotuloBefore = rotuloBefore[1];
-					rotuloBefore = rotuloBefore.replace(" ","").toLowerCase();
-					hasChange = rotuloCurrent != rotuloBefore;
-				};
-				if(!hasChange)
-					return rotuloCurrent;
-
-				return !hasChange;
-			}
-
-			function mesmaRegiao(){
+			function mesmo(tocompare){
 				var rotulos;				
 				var rotuloCurrent,rotuloBefore;
 				var rotuloIndex;
@@ -953,23 +907,7 @@
 				var regiao;
 				var regiaoNome;
 
-				var goOn;				
-
-				var saoCidades;
-				var saoRegiao;
-				var saoEstado;
-				var saoMesorregiao;
-				var saoMicrorregiao;
-
-				var unMactchRegioesContador;
-				var regiaoContador;
-
-				saoCidades = isEveryoneCity();
-
-				saoRegiao = true;
-				saoEstado = true;
-				saoMesorregiao = true;
-				saoMicrorregiao = true;
+				var goOn;
 
 				rotulos = principal.dados;
 
@@ -978,101 +916,50 @@
 
 				for(rotuloIndex = 1; rotulos.length > rotuloIndex && goOn; rotuloIndex++){					
 					rotuloCurrent = rotulos[rotuloIndex];
-					rotuloBefore = rotulos[rotuloIndex-1];					
+					rotuloBefore = rotulos[rotuloIndex-1];
 
-					rotuloCurrent = rotuloCurrent.replace(/\s/ig,"").toLowerCase();
-					rotuloBefore = rotuloBefore.replace(/\s/ig,"").toLowerCase();
-
-					if(saoCidades){
-						rotuloCurrent = rotuloCurrent.split("/");
-						rotuloBefore = rotuloBefore.split("/");
-						rotuloCurrent = rotuloCurrent[1];
-						rotuloBefore = rotuloBefore[1];
+					if(municipios){
+						goOn = aux(rotuloCurrent,rotuloBefore,"nome",tocompare);
 					}
-					else{
-						if(saoRegiao){
-							unMactchRegioesContador = 0;
-							regiaoContador = 0;
-
-							for(regiaoNome in regioes){
-								regiao = regioes[regiaoNome];
-								regiaoContador++;
-								if(regiao.indexOf(rotuloCurrent) >= 0){
-									goOn = regiao.indexOf(rotuloCurrent) == regiao.indexOf(rotuloBefore);
-								}
-								else{
-									unMactchRegioesContador++;
-									saoRegiao = unMactchRegioesContador != regiaoContador;
-									goOn = saoRegiao;
-								}
-							}
-						}
-						if(!saoRegiao && saoMesorregiao){
-							var infoCurrent = XTR_MUNICIPIOS_INFO.filter(function(value){
-								return value.meso == rotuloCurrent;
-							});
-							infoCurrent.sort(function(a,b){
-								return XtrGraficoUtil.compare(a,b,"name");
-							});
-							var infoBefore = XTR_MUNICIPIOS_INFO.filter(function(value){
-								return value.meso == rotuloBefore;
-							});						
-							infoBefore.sort(function(a,b){
-								return XtrGraficoUtil.compare(a,b,"name");
-							});
-
-							saoMesorregiao = infoBefore.length + infoCurrent.length > 0;
-
-							if(saoMesorregiao){
-								infoBefore = infoBefore[0];
-								infoCurrent = infoCurrent[0];
-
-								infoCurrent = infoCurrent.name;
-								infoBefore = infoBefore.name;
-
-								infoBefore = infoBefore.split("/")[1].replace(/\s/ig,"");
-								infoCurrent = infoCurrent.split("/")[1].replace(/\s/ig,"");
-
-								goOn = infoBefore == infoCurrent;
-							}
-						}
-						if(!saoRegiao && !saoMesorregiao && saoMicrorregiao){
-							var infoCurrent = XTR_MUNICIPIOS_INFO.filter(function(value){
-								return value.micro == rotuloCurrent;
-							});
-							infoCurrent.sort(function(a,b){
-								return XtrGraficoUtil.compare(a,b,"name");
-							});
-							var infoBefore = XTR_MUNICIPIOS_INFO.filter(function(value){
-								return value.micro == rotuloBefore;
-							});						
-							infoBefore.sort(function(a,b){
-								return XtrGraficoUtil.compare(a,b,"name");
-							});
-
-							saoMicrorregiao = infoBefore.length + infoCurrent.length > 0;
-							goOn = saoMesorregiao;
-
-							if(saoMesorregiao){
-								infoBefore = infoBefore[0];
-								infoCurrent = infoCurrent[0];
-
-								infoCurrent = infoCurrent.name;
-								infoBefore = infoBefore.name;
-
-								infoBefore = infoBefore.split("/")[1].replace(/\s/ig,"");
-								infoCurrent = infoCurrent.split("/")[1].replace(/\s/ig,"");
-
-								goOn = infoBefore == infoCurrent;
-							}
-						}
+					else if(microregioes){
+						goOn = aux(rotuloCurrent,rotuloBefore,"microregiao",tocompare);
 					}
-
+					else if(mesorregioes){
+						goOn = aux(rotuloCurrent,rotuloBefore,"mesoregiao",tocompare);
+					}
+					else if(estados){
+						goOn = aux(rotuloCurrent,rotuloBefore,"estado",tocompare);
+					}
 				};
-				if(goOn)
-					return regiaoNome;
+				return goOn;
 
-				return false;
+				function aux(rotuloCurrent,rotuloBefore,propertyTarget,propertyToCompare){
+					var infoCurrent = XTR_MUNICIPIOS_INFO.filter(function(value){
+						return value[propertyTarget] == rotuloCurrent;
+					});
+					var infoBefore = XTR_MUNICIPIOS_INFO.filter(function(value){
+						return value[propertyTarget] == rotuloBefore;
+					});
+					infoCurrent.sort(function(a,b){
+						return XtrGraficoUtil.compare(a,b,propertyToCompare);
+					});
+					infoBefore.sort(function(a,b){
+						return XtrGraficoUtil.compare(a,b,propertyToCompare);
+					});
+
+					if(infoBefore.length + infoCurrent.length > 0){
+
+						infoBefore = infoBefore[0];
+						infoCurrent = infoCurrent[0];
+
+						infoCurrent = infoCurrent[propertyToCompare];
+						infoBefore = infoBefore[propertyToCompare];
+						if(infoBefore.replace(/\s/ig,"") == infoCurrent.replace(/\s/ig,"")){
+							return infoCurrent;
+						}
+					}
+					return false;
+				}
 			}
 	}
 	/**
