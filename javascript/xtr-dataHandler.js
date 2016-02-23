@@ -358,12 +358,14 @@
 					periodosIguais: principal.periodosIguais,
 					mesmoEstado: principal.mesmoEstado,
 					mesmaRegiao: principal.mesmaRegiao,
+					mesmaMesorregiao: principal.mesmaMesorregiao,
 					municipios: principal.municipios,
 					estados: principal.estados,
 					regioes: principal.regioes,
 					mesorregioes: principal.mesorregioes,
 					microrregioes: principal.microregioes
 				}
+
 				dosomething("------------------");
 				if(tem.uma.categoria && tem.uma.serie){
 					return "";
@@ -482,9 +484,6 @@
 					else if(tem.mesorregioes){
 						grafico += "/mesorregioes";						
 					}
-					else if(tem.microrregioes){						
-						grafico += "/microrregioes";
-					}
 					else if(tem.estados){
 						grafico += "/estados";
 					}
@@ -495,6 +494,10 @@
 					if(tem.mesmaRegiao){
 						if(tem.mesmoEstado){
 							grafico += "/estados/"+tem.mesmoEstado.toLowerCase();
+
+							if(tem.mesmaMesorregiao){						
+								grafico += "/mesorregioes/"+tem.mesmaMesorregiao.toLowerCase();
+							}
 						}
 						else{
 							grafico += "/regioes/"+tem.mesmaRegiao.toLowerCase();
@@ -869,7 +872,11 @@
 
 			this.mesmoEstado = mesmo("estado");
 			this.mesmaRegiao = mesmo("regiao");
-
+			this.mesmaMesorregiao = mesmo("mesorregiao");
+			if(this.mesmaMesorregiao){
+				this.mesmaMesorregiao = this.mesmaMesorregiao.replace("/","-").replace(/\s/g,"_");
+			}
+			
 			this._ = principal;
 
 			return this;
@@ -918,6 +925,7 @@
 
 				return hasChange;					
 			}
+
 			function mesmo(tocompare){
 				var rotulos;				
 				var rotuloCurrent,rotuloBefore;
