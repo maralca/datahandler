@@ -66,8 +66,37 @@
 			digest();
 
 			xtrGrafico.organize.first = data.sortedColumn || xtrGrafico.organize.first;
+			if(xtrGrafico.organize.first == null){
+				xtrGrafico.organize.first = 1;
+			}
+
 			xtrGrafico.organize.order = data.sortedOrder || xtrGrafico.organize.order;
-			
+
+            compositeDatas.sort(function(a,b){
+                return XtrGraficoUtil.compare(b,a,"series.length");
+            });
+
+
+			if(xtrGrafico.organize.first > 0){
+				coluna = data.coluna[xtrGrafico.organize.first];
+
+				for(var compositeDataIndex = 0; compositeDatas.length > compositeDataIndex; compositeDataIndex++){
+					var compositeData = compositeDatas[compositeDataIndex];
+					var serie = compositeData.series;
+					if(serie.length > 1)
+						continue;					
+					serie = serie[0];
+					if(serie.titulo.indexOf(coluna.titulo) == 0)
+						break;
+				}
+				xtrGrafico.organize.first = compositeDataIndex;
+				isASC = xtrGrafico.organize.order.indexOf("asc") >= 0;
+
+				compositeDatas[compositeDataIndex].notOrder = true;
+
+				sort(compositeDataIndex, isASC);
+			}
+
 			this.saveRawData=saveRawData;
 			this.setMaximum=setMaximum;
 			this.next=next;
@@ -86,6 +115,52 @@
 		/////////////////////
 		//METODOS PROPRIOS //
 		/////////////////////
+			function sort(compositeDataIndex,asc){
+				var compositeData;
+
+				var serie;
+
+				var dados,dadosFormatados;
+				var rotulos,rotulosFormatados;
+
+				var order,orderClone;
+				var ord;
+
+				asc = XtrGraficoUtil.isset(asc) ? asc : true;
+				order = [];
+
+				compositeData = compositeDatas[compositeDataIndex];
+
+				serie = compositeData.series;
+				serie = serie[0];
+
+				dados = serie.dados;
+				dadosFormatados = serie.dadosFormatados;
+				rotulos = compositeData.rotulos;
+				rotulosFormatados = compositeData.rotulosFormatados;
+
+				dados.sort(function(a,b){
+					ord = asc ? a - b : b - a;
+					order.push(ord);
+					return ord;
+				});
+
+				orderClone = XtrGraficoUtil.clone(order);
+				dadosFormatados.sort(function(a,b){
+					return orderClone.shift();
+				});
+
+				orderClone = XtrGraficoUtil.clone(order);
+				rotulos.sort(function(a,b){
+					return orderClone.shift();
+				});
+
+				orderClone = XtrGraficoUtil.clone(order);
+				rotulosFormatados.sort(function(a,b){
+					return orderClone.shift();
+				});
+
+			}
 			/**
 			 * OBTER, series da forma que serão usadas na formação do compositeData
 			 *
