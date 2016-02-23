@@ -65,6 +65,9 @@
 			digestEnable = true;
 			digest();
 
+			xtrGrafico.organize.first = data.sortedColumn || xtrGrafico.organize.first;
+			xtrGrafico.organize.order = data.sortedOrder || xtrGrafico.organize.order;
+			
 			this.saveRawData=saveRawData;
 			this.setMaximum=setMaximum;
 			this.next=next;
@@ -585,6 +588,7 @@
 					return "linear";
 				return "log";
 			}
+
 			/**
 			 * ATUALIZAR informações, referente à essa classe
 			 *
@@ -1099,6 +1103,33 @@
 
 				return tem;
 			}
+	}
+	function LocationHandler(){
+
+		this.getSearch = getSearch;
+
+		return this;
+
+		function getSearch(property){
+			var location;
+			var locationIndex;
+
+			location = window.location.search;
+			location = location.replace("?","");
+			location = location.split("&");
+
+			locationIndex = location.indexOf(property+"=");
+			if(locationIndex < 0){
+				return false;
+			}
+
+			location = location[locationIndex];
+
+			location = location.split("=");
+			location = location[1];
+
+			return location;
+		}
 	}
 	function CookieHandler(){
 
