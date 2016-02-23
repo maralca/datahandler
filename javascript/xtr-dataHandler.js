@@ -479,7 +479,10 @@
 					escala = "linear";
 
 					if(tem.municipios){
-						grafico += "/municipios"
+						grafico += "/municipios";
+					}
+					else if(tem.microrregioes){
+						grafico += "/microrregioes";
 					}
 					else if(tem.mesorregioes){
 						grafico += "/mesorregioes";						
@@ -506,6 +509,7 @@
 					else{
 						grafico += "/brasil"
 					}
+					
 					dosomething(grafico,escala);
 					return [grafico,escala];
 				}
