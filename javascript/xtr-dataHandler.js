@@ -65,7 +65,7 @@
 			digestEnable = true;
 			digest();
 
-			xtrGrafico.organize.first = data.sortedColumn || xtrGrafico.organize.first;
+			xtrGrafico.organize.first = data.sortedColumn;
 			if(xtrGrafico.organize.first == null){
 				xtrGrafico.organize.first = 1;
 			}
@@ -75,26 +75,33 @@
             compositeDatas.sort(function(a,b){
                 return XtrGraficoUtil.compare(b,a,"series.length");
             });
+            if(XtrGraficoUtil.isset(xtrGrafico.organize.first)){
 
+	            coluna = data.coluna[xtrGrafico.organize.first];
 
-			if(xtrGrafico.organize.first > 0){
-				coluna = data.coluna[xtrGrafico.organize.first];
+				if(XtrGraficoUtil.isset(coluna)){				
 
-				for(var compositeDataIndex = 0; compositeDatas.length > compositeDataIndex; compositeDataIndex++){
-					var compositeData = compositeDatas[compositeDataIndex];
-					var serie = compositeData.series;
-					if(serie.length > 1)
-						continue;					
-					serie = serie[0];
-					if(serie.titulo.indexOf(coluna.titulo) == 0)
-						break;
+					for(var compositeDataIndex = 0; compositeDatas.length > compositeDataIndex; compositeDataIndex++){
+						var compositeData = compositeDatas[compositeDataIndex];
+						var serie = compositeData.series;
+						if(serie.length > 1)
+							continue;					
+						serie = serie[0];
+						if(serie.titulo.indexOf(coluna.titulo) == 0)
+							break;
+					}
+					xtrGrafico.organize.first = compositeDataIndex;
+					if(compositeData.tipo.indexOf("geo") < 0){
+						isASC = xtrGrafico.organize.order.indexOf("asc") >= 0;
+
+						compositeData = compositeDatas[compositeDataIndex];
+						if(XtrGraficoUtil.isset(compositeData)){
+							compositeData = organize(compositeData, isASC);							
+							compositeData.notOrder = true;
+							compositeDatas[compositeDataIndex]  = compositeData;
+						}
+					}
 				}
-				xtrGrafico.organize.first = compositeDataIndex;
-				isASC = xtrGrafico.organize.order.indexOf("asc") >= 0;
-
-				compositeDatas[compositeDataIndex].notOrder = true;
-
-				sort(compositeDataIndex, isASC);
 			}
 
 			this.saveRawData=saveRawData;
@@ -115,9 +122,7 @@
 		/////////////////////
 		//METODOS PROPRIOS //
 		/////////////////////
-			function sort(compositeDataIndex,asc){
-				var compositeData;
-
+			function organize(compositeData,asc){
 				var serie;
 
 				var dados,dadosFormatados;
@@ -129,7 +134,7 @@
 				asc = XtrGraficoUtil.isset(asc) ? asc : true;
 				order = [];
 
-				compositeData = compositeDatas[compositeDataIndex];
+				compositeData = XtrGraficoUtil.clone(compositeData);
 
 				serie = compositeData.series;
 				serie = serie[0];
@@ -155,11 +160,11 @@
 					return orderClone.shift();
 				});
 
-				orderClone = XtrGraficoUtil.clone(order);
 				rotulosFormatados.sort(function(a,b){
-					return orderClone.shift();
+					return order.shift();
 				});
 
+				return compositeData;
 			}
 			/**
 			 * OBTER, series da forma que serão usadas na formação do compositeData
