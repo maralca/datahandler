@@ -596,9 +596,7 @@
 					dosomething(grafico,escala);
 					return [grafico,escala];
 				}
-				else{
-					tipoIndex--;
-				}
+				
 				if(tipoIndex==2){ //nominal
 					dosomething("1 série de dados?",tem.uma.serie,'\n',
 						"Valores absolutos ou porcentagens verticais?",tem.coeficiente && tem.soma.vertical || tem.absoluto,'\n',
@@ -1162,16 +1160,17 @@
 					descendente = descendentes[descendenteIndex];
 					valores = descendente.dados;
 
-					max = XtrGraficoUtil.maximum(null, valores);
-					min =  XtrGraficoUtil.minimum(null, valores);
+					max = XtrGraficoUtil.maximum(valores);
+					min =  XtrGraficoUtil.minimum(valores);
+					
 					base10max = XtrGraficoUtil.log10(max);
 					base10min = XtrGraficoUtil.log10(min);
 
 					bases10.max.push(base10max);
 					bases10.min.push(base10min);
 
-					base10max = XtrGraficoUtil.maximum(null,bases10.max);
-					base10min = XtrGraficoUtil.minimum(null,bases10.min);
+					base10max = XtrGraficoUtil.maximum(bases10.max);
+					base10min = XtrGraficoUtil.minimum(bases10.min);
 
 					base10 = base10max - base10min;
 
@@ -1666,9 +1665,9 @@
             var L=[];
             var parcial = []
             var somatorio = 0;
-            dosomething('------------\n',titulo);
+            //dosomething('------------\n',titulo);
             for(var i = 0; i < x.length; i++) {
-                dosomething("X:",x[i],"\tY:",y[i]);
+                //dosomething("X:",x[i],"\tY:",y[i]);
                 L[i]=1;
                 for (var j = 0; j < x.length; j++) {
                     if(j != i){
@@ -1680,7 +1679,7 @@
             for (var i = 0; i < parcial.length; i++) {
                 somatorio = somatorio + parcial[i];
             };
-            dosomething("\nXa:",alvo,"\tP(Xa):",somatorio);
+            //dosomething("\nXa:",alvo,"\tP(Xa):",somatorio);
             return somatorio;
         },
         makeInterpolationArray:function(rotulos){
