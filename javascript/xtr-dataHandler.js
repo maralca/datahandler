@@ -271,6 +271,7 @@
 						links: principal.url,		
 						dado: tipoDado,
 						inconsistencias: [],
+						selecionadoRotulos: principal.selecionado,
 						polados: [],
 						titulo: tituloPrincipal
 					}
@@ -320,6 +321,7 @@
 					links: principal.url,		
 					dado: principal.tipo,
 					inconsistencias: [],
+					selecionadoRotulos: principal.selecionado,
 					polados: [],
 					titulo: tituloPrincipal
 				}
