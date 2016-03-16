@@ -238,12 +238,14 @@
 				tipoDado = XtrGraficoUtil.isset(kwargs.tipoDado) ? kwargs.tipoDado : principal.tipo;
 				escala = XtrGraficoUtil.isset(kwargs.escala) ? kwargs.escala : "linear";
 				titulo = XtrGraficoUtil.isset(kwargs.titulo) ? kwargs.titulo : principal.titulo;
+				titulo = titulo == null ? "" : titulo;
 				specifics = [];
 				if(colunaIndexes == "all"){
-					indexSeeker = descendentes.length;
-					while(indexSeeker--){
+					indexSeeker = 0;
+					while(descendentes.length > indexSeeker){
 						descendente = descendentes[indexSeeker];
 						specifics.push(descendente);
+						indexSeeker++;
 					}	
 				}
 				else{
@@ -305,8 +307,9 @@
 				
 				tipoEscala = getType(principal,descendentes);
 
-				if(tipoEscala[0].indexOf("geografica") >= 0 && descendentes.length > 1)
-					tipoEscala[0] = null
+				if(tipoEscala[0].indexOf("geografica") >= 0 && descendentes.length > 1){
+					tipoEscala[0] = null;
+				}
 
 				compositeData = {
 					titulos: {
@@ -395,7 +398,7 @@
 					colunas: "all"
 				}
 				compositeData = getSpecificCompositeData(principal,descendentes,kwargs,tituloPrincipal)
-
+				console.log(compositeData);
 				compositeDatas.push(compositeData);
 
 				return compositeDatas;
@@ -453,7 +456,7 @@
 
 				dosomething("------------------");
 				if(tem.uma.categoria && tem.uma.serie){
-					return "";
+					return ["columns","linear"];
 				}				
 				tipo = principal._.tipo;
 				tipoIndex = tipos.principal.indexOf(tipo);
@@ -697,7 +700,7 @@
 
 					graficos = Data.grafico;
 
-					tituloPrincipal = Data.titulo;
+					tituloPrincipal = Data.titulo == null ? "" : Data.titulo;
 
 					compositeDatas = getCompositeDatas(
 						colunas.principal,
@@ -709,10 +712,6 @@
 					ordem = Data.column;
 
 					primeiro = Data.sortedColumn;
-
-					compositeDatas.sort(function(a,b){
-						
-					});
 					
 					currentIndex = 0;
 
