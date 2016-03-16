@@ -398,7 +398,7 @@
 					colunas: "all"
 				}
 				compositeData = getSpecificCompositeData(principal,descendentes,kwargs,tituloPrincipal)
-				console.log(compositeData);
+
 				compositeDatas.push(compositeData);
 
 				return compositeDatas;
