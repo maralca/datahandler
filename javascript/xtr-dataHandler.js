@@ -52,8 +52,8 @@
 				console.warn("dataHandler, input data\\grafico is not set");
 			}
 			else if(!XtrGraficoUtil.isarray(data.grafico)){
-				console.error("dataHandler, input data\\grafico is not a array");
-				return;
+				console.warn("dataHandler, input data\\grafico is not a array");
+				data.grafico = [data.grafico];
 			}
 			if(XtrGraficoUtil.isset(data.titulo)){
 				titulo = data.titulo;
@@ -116,7 +116,7 @@
 
 			return this;
 
-			function dosomething(){
+			function doSomething(){
 				return;
 			}
 		/////////////////////
@@ -363,6 +363,19 @@
 				grupos = grupoMaker.elements;
 				
 				compositeDatas = [];
+								
+				for(graficoIndex = 0; graficos.length > graficoIndex; graficoIndex++){
+					grafico = graficos[graficoIndex];
+
+					kwargs = {
+						tipo: grafico.tipo,
+						mostrar: grafico.mostrar,
+						colunas: grafico.colunas
+					};
+					compositeData = getSpecificCompositeData(principal,descendentes,kwargs,tituloPrincipal);
+					if(XtrGraficoUtil.isobj(compositeData) ? compositeData.tipo!=null : false)
+						compositeDatas.push(compositeData);
+				};
 
 				for(grupoIndex in grupos){
 					grupo = grupos[grupoIndex];
@@ -378,18 +391,6 @@
 						if(XtrGraficoUtil.isset(compositeData.tipo) ? compositeData.tipo!=null : false)
 							compositeDatas.push(compositeData);
 					};
-				};				
-				for(graficoIndex = 0; graficos.length > graficoIndex; graficoIndex++){
-					grafico = graficos[graficoIndex];
-
-					kwargs = {
-						tipo: grafico.tipo,
-						mostrar: grafico.mostrar,
-						colunas: grafico.colunas
-					};
-					compositeData = getSpecificCompositeData(principal,descendentes,kwargs,tituloPrincipal);
-					if(XtrGraficoUtil.isobj(compositeData) ? compositeData.tipo!=null : false)
-						compositeDatas.push(compositeData);
 				};
 
 				kwargs = {
@@ -432,7 +433,7 @@
 				tem = {
 					absoluto: descendentes.has("absoluto"),
 					coeficiente: descendentes.has("coeficiente"),
-					indice: descendentes.has("coeficiente"),
+					indice: descendentes.has("indice"),
 					soma:{
 						vertical: descendentes.hassum("vertical"),
 						horizontal: descendentes.hassum("horizontal") && descendentes.length>1
@@ -453,63 +454,65 @@
 					mesorregioes: principal.mesorregioes,
 					microrregioes: principal.microregioes
 				}
-
-				dosomething("------------------");
-				if(tem.uma.categoria && tem.uma.serie){
-					return ["columns","linear"];
-				}				
+				doSomething(tem);
+				
 				tipo = principal._.tipo;
 				tipoIndex = tipos.principal.indexOf(tipo);
 
+				doSomething("------------------");
+				if(tem.uma.categoria && tem.uma.serie && tipoIndex!=3){
+					return ["columns","linear"];
+				}				
+
 				if(tipoIndex==0){ //Cronologica
 
-					dosomething("Dividida em períodos iguais?",tem.periodosIguais);
+					doSomething("Dividida em períodos iguais?",tem.periodosIguais);
 
 					if(tem.periodosIguais){			
 
-						dosomething("Coeficientes horizontais e/ou tem Índices?",
+						doSomething("Coeficientes horizontais e/ou tem Índices?",
 									tem.coeficiente && tem.soma.horizontal || tem.indice);	
 
 						if(tem.coeficiente && tem.soma.horizontal || tem.indice){
 
-							dosomething("Quantas séries de dados?",
+							doSomething("Quantas séries de dados?",
 										descendentes.length);
 
 							if(tem.uma.serie){
 								grafico = "line";
 								escala = getScale(descendentes);
-								dosomething(grafico,escala);
+								doSomething(grafico,escala);
 								return [grafico,escala];
 							}
 							else{
 								grafico = "line"; //agrupada
 								escala = getScale(descendentes);
-								dosomething(grafico,escala);
+								doSomething(grafico,escala);
 								return [grafico,escala];
 							}
 						}
-						dosomething("Valores absolutos ou porcentagens verticais?",tem.absoluto || tem.coeficiente,'\n',
+						doSomething("Valores absolutos ou porcentagens verticais?",tem.absoluto || tem.coeficiente,'\n',
 									"Valores somam verticalmente?",tem.soma.vertical);
 
 						if((tem.absoluto || tem.coeficiente && tem.soma.vertical)&& tem.soma.vertical){
 
-							dosomething("Quantas séries de dados?",descendentes.length);
+							doSomething("Quantas séries de dados?",descendentes.length);
 
 							if(tem.uma.serie){
 								grafico = "area";
 								escala = "linear";
-								dosomething(grafico,escala);
+								doSomething(grafico,escala);
 								return [grafico,escala];
 							}
 
-							dosomething("Valores absolutos?",tem.absoluto,'\n',
+							doSomething("Valores absolutos?",tem.absoluto,'\n',
 								"Valores positivos?",tem.positivos,'\n',
 								"Valores somam horizontalmente?",tem.soma.horizontal);
 
 							if(tem.absoluto && tem.positivos && tem.soma.horizontal){
 								grafico = "stackedarea";
 								escala = "linear";
-								dosomething(grafico,escala);
+								doSomething(grafico,escala);
 								return [grafico,escala];
 							}
 						}
@@ -519,45 +522,45 @@
 				if(tipoIndex==1){ //Ordinal
 					if(tem.abaixoDoLimite){
 
-						dosomething("Quantas séries de dados?",descendentes.length);
+						doSomething("Quantas séries de dados?",descendentes.length);
 
 						if(tem.uma.serie){
 							grafico = "columns";
 							escala = "linear";
-							dosomething(grafico,escala);
+							doSomething(grafico,escala);
 							return [grafico,escala];
 						}
 
-						dosomething("Valores positivos?",tem.positivos,'\n',
+						doSomething("Valores positivos?",tem.positivos,'\n',
 							"Valores somam horizontalmente?",tem.soma.horizontal);
 
 						if(!(tem.positivos && tem.soma.horizontal)){
 							grafico = "clusteredcolumns";
 							escala = getScale(descendentes);
-							dosomething(grafico,escala);
+							doSomething(grafico,escala);
 							return [grafico,escala];
 						}
 
-						dosomething("Valores absolutos?",tem.absoluto);
+						doSomething("Valores absolutos?",tem.absoluto);
 
 						if(tem.absoluto){
 							grafico = "stackedcolumns";
 							escala = "linear";
-							dosomething(grafico,escala);
+							doSomething(grafico,escala);
 							return [grafico,escala];
 						}
-						dosomething("Porcentagens horizontais?",tem.coeficiente && tem.soma.horizontal);
+						doSomething("Porcentagens horizontais?",tem.coeficiente && tem.soma.horizontal);
 
 						if(tem.coeficiente && tem.soma.horizontal){
 							grafico = "stackedcolumns";
 							escala = "justa";
-							dosomething(grafico,escala);
+							doSomething(grafico,escala);
 							return [grafico,escala];
 						}
 						else{
 							grafico = "clusteredcolumns";
 							escala = getScale(descendentes);
-							dosomething(grafico,escala);
+							doSomething(grafico,escala);
 							return [grafico,escala];
 						}
 					}
@@ -598,59 +601,59 @@
 						grafico += "/brasil"
 					}
 					
-					dosomething(grafico,escala);
+					doSomething(grafico,escala);
 					return [grafico,escala];
 				}
 				
 				if(tipoIndex==2){ //nominal
-					dosomething("1 série de dados?",tem.uma.serie,'\n',
+					doSomething("1 série de dados?",tem.uma.serie,'\n',
 						"Valores absolutos ou porcentagens verticais?",tem.coeficiente && tem.soma.vertical || tem.absoluto,'\n',
 						"Valores positivos?",tem.positivos,'\n',
 						"Valores somam verticalmente?",tem.soma.vertical);
 					if(tem.uma.serie && (tem.coeficiente && tem.soma.vertical || tem.absoluto) && tem.positivos && tem.soma.vertical){
 						grafico = "pie";
 						escala = "linear";
-						dosomething(grafico,escala);
+						doSomething(grafico,escala);
 						return [grafico,escala];
 					}
 				}
 
-				dosomething("Quantas séries de dados?",descendentes.length);
+				doSomething("Quantas séries de dados?",descendentes.length);
 
 				if(tem.maisDeUma){
 					grafico = "bars";
 					escala = "linear";
-					dosomething(grafico,escala);
+					doSomething(grafico,escala);
 					return [grafico,escala];
 				}
 
-				dosomething("Valores positivos? Valores somam horizontalmente?",
+				doSomething("Valores positivos? Valores somam horizontalmente?",
 							tem.positivos,'e',tem.soma.horizontal);
 
 				if(tem.positivos && tem.soma.horizontal){
 
-					dosomething("Valores absolutos?",tem.absoluto);
+					doSomething("Valores absolutos?",tem.absoluto);
 
 					if(tem.absoluto){
 						grafico = "stackedbars";
 						escala = "linear";
-						dosomething(grafico,escala);
+						doSomething(grafico,escala);
 						return [grafico,escala];
 					}
 
-					dosomething("Porcentagens horizontais?",tem.coeficiente && tem.soma.horizontal);
+					doSomething("Porcentagens horizontais?",tem.coeficiente && tem.soma.horizontal);
 
 					if(tem.coeficiente && tem.soma.horizontal){
 						grafico = "stackedbars";
 						escala = "justa";
-						dosomething(grafico,escala);
+						doSomething(grafico,escala);
 						return [grafico,escala];
 					}
 				}
 				
 				grafico = "clusteredbars";
 				escala = getScale(descendentes);
-				dosomething(grafico,escala);
+				doSomething(grafico,escala);
 				return [grafico,escala];
 			}
 			/**
@@ -683,7 +686,7 @@
 			 */
 			function digest(){
 				if(digestEnable){
-					dosomething("Digest of DataHandler was request by",arguments.callee.caller);
+					doSomething("Digest of DataHandler was request by",arguments.callee.caller);
 
 					colunas = {
 						principal: {},
@@ -911,24 +914,6 @@
 			}
 	}
 	/**
-	 * Classe, para obter Date através de input customizado.
-	 *
-	 * @method  CustomDate
-	 *
-	 * @param   {Date}    customDateString
-	 */
-	function CustomDate(customDateString){
-		var customDateArray;
-		var date;
-		var toEval;
-
-		customDateArray = customDateString.split("-");
-
-		date = eval("new Date("+customDateArray.toString()+");");
-
-		return date;
-	}
-	/**
 	 * Classe, para obter certas informações da coluna princial.
 	 *
 	 * @method  ColunaPrincipal
@@ -993,20 +978,19 @@
 				if(principal.tipo != "cronologica")
 					return false;
 
+				difRotuloSum = 0;
+
 				for(rotuloIndex = 1; rotulos.length > rotuloIndex && !hasChange; rotuloIndex++){
 
 					rotuloCurrent = rotulos[rotuloIndex];
 					rotuloBefore = rotulos[rotuloIndex-1];
 
-					rotuloCurrent = new CustomDate(rotuloCurrent);
-					rotuloBefore = new CustomDate(rotuloBefore);
-
-					rotuloCurrent = rotuloCurrent.getFullYear();
-					rotuloBefore = rotuloBefore.getFullYear();
+					rotuloCurrent = parseInt(rotuloCurrent);
+					rotuloBefore = parseInt(rotuloBefore);
 
 					difRotulo = rotuloCurrent - rotuloBefore;
 					difRotuloSum += difRotulo;
-
+					
 					hasChange = difRotulo == difRotuloSum/rotuloIndex;
 				};
 
@@ -1026,8 +1010,27 @@
 				rotulos = principal.dados;
 
 				goOn = rotulos.length > 1;
+				
+				if(!goOn){
+					rotuloCurrent = rotulos[0];
+					rotuloBefore = rotulos[0];
+					if(municipios){
+						goOn = aux(rotuloCurrent,rotuloBefore,"nome",tocompare);
+					}
+					else if(microregioes){
+						goOn = aux(rotuloCurrent,rotuloBefore,"microrregiao",tocompare);
+					}
+					else if(mesorregioes){
+						goOn = aux(rotuloCurrent,rotuloBefore,"mesorregiao",tocompare);
+					}
+					else if(estados){
+						goOn = aux(rotuloCurrent,rotuloBefore,"estado",tocompare);
+					}
+					return goOn;
+				}
+				
 				goOn = goOn && principal.tipo == "geografica";
-
+				
 				for(rotuloIndex = 1; rotulos.length > rotuloIndex && goOn; rotuloIndex++){					
 					rotuloCurrent = rotulos[rotuloIndex];
 					rotuloBefore = rotulos[rotuloIndex-1];
@@ -1666,9 +1669,9 @@
             var L=[];
             var parcial = []
             var somatorio = 0;
-            //dosomething('------------\n',titulo);
+            //doSomething('------------\n',titulo);
             for(var i = 0; i < x.length; i++) {
-                //dosomething("X:",x[i],"\tY:",y[i]);
+                //doSomething("X:",x[i],"\tY:",y[i]);
                 L[i]=1;
                 for (var j = 0; j < x.length; j++) {
                     if(j != i){
@@ -1680,7 +1683,7 @@
             for (var i = 0; i < parcial.length; i++) {
                 somatorio = somatorio + parcial[i];
             };
-            //dosomething("\nXa:",alvo,"\tP(Xa):",somatorio);
+            //doSomething("\nXa:",alvo,"\tP(Xa):",somatorio);
             return somatorio;
         },
         makeInterpolationArray:function(rotulos){
